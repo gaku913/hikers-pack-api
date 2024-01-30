@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "(ruby) Rewrite",
+      "type": "shell",
+      "command": "ruby .vscode/rewrite.rb ${file}",
+      "problemMatcher": []
+    }
+  ]
+}
