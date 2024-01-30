@@ -17,4 +17,9 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ]
   gem "rspec-rails"
   gem "factory_bot_rails"
+
+  # コンソール上でテーブルデータを成型して表示する。
+  gem "hirb"
+  # hirb日本語補正
+  gem "hirb-unicode-steakknife"
 end
