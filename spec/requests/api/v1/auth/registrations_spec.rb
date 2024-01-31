@@ -26,7 +26,12 @@ RSpec.describe "Registrations", type: :request do
   end
 
   describe "Update User" do
-    let(:user) { create(:user, name: "test", email: "test@example.com") }
+    let(:user) { create(:user,
+      name: "test",
+      email: "test@example.com",
+      password: "password",
+      password_confirmation: "password",
+    ) }
 
     it "update user name" do
       request_sign_in user
@@ -45,6 +50,25 @@ RSpec.describe "Registrations", type: :request do
     it "can't update user unless signed in" do
       request_user_update(name: "Taro")
       expect(response).to have_http_status 404
+    end
+
+    it "update password" do
+      request_sign_in user
+      request_password_update(
+        password: "new password",
+        password_confirmation: "new password",
+      )
+      # sign in with new password
+      request_sign_in(email: user.email, password: "new password")
+      expect(response).to have_http_status 200
+    end
+
+    it "can't update password unless signed in :401 Unauthorized" do
+      request_password_update(
+        password: "new password",
+        password_confirmation: "new password",
+      )
+      expect(response).to have_http_status 401
     end
   end
 

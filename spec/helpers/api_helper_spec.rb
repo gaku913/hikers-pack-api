@@ -22,6 +22,17 @@ RSpec.describe ApiHelper, type: :request do
     expect(response).to have_http_status 200
   end
 
+  # request_password_update
+  it "request update password" do
+    request_sign_in user
+    request_password_update(
+      password: "new password",
+      password_confirmation: "new password"
+    )
+    expect(response).to have_http_status 200
+  end
+
+
   # response_header
   it "return response header" do
     expect(response_header).to include(uid: user.email)
