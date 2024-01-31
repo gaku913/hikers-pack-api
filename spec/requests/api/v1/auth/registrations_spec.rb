@@ -6,11 +6,11 @@ RSpec.describe "Registrations", type: :request do
     let(:params_hash) { attributes_for(:user) }
 
     it "create new user successfully" do
-      # request
+      # create request
       post api_v1_user_registration_path, params: params_hash
       expect(response).to have_http_status 200
 
-      # added user
+      # check added user
       user = User.order(updated_at: :desc).first
       expect(user.email).to eq params_hash[:email]
     end
@@ -41,42 +41,29 @@ RSpec.describe "Registrations", type: :request do
     let(:user) { create(:user, password: "password") }
 
     it "sign in successfully" do
-      post api_v1_user_session_path, params: {
-        email: user.email,
-        password: user.password
-      }
+      request_sign_in user
       expect(response).to have_http_status 200
     end
 
     it "sign in failed: 401 Unauthorized" do
-      post api_v1_user_session_path, params: {
-        email: user.email,
-        password: "xxx"
-      }
+      user.password = "xxx" # set wrong password
+      request_sign_in user
       expect(response).to have_http_status 401
     end
   end
 
   describe "Sign out" do
-    let(:user) { create(:user, password: "password") }
+    let(:user) { create(:user) }
 
     it "sign out" do
       # sign in
-      post api_v1_user_session_path, params: {
-        email: user.email,
-        password: user.password
-      }
-      expect(response).to have_http_status 200
+      request_sign_in user
 
       # sign out
-      uid = response.header["uid"]
-      client = response.header["client"]
-      token = response.header["access-token"]
-
       delete destroy_api_v1_user_session_path, params: {
         "uid": uid,
         "client": client,
-        "access-token": token,
+        "access-token": access_token,
       }
       expect(response).to have_http_status 200
     end
