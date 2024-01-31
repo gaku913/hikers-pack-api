@@ -15,6 +15,13 @@ RSpec.describe ApiHelper, type: :request do
     expect(access_token).not_to be nil
   end
 
+  # request_user_update
+  it "request update user data" do
+    request_sign_in user
+    request_user_update(name: "Taro")
+    expect(response).to have_http_status 200
+  end
+
   # response_header
   it "return response header" do
     expect(response_header).to include(uid: user.email)

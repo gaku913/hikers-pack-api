@@ -11,6 +11,16 @@ module ApiHelper
     @access_token = response_header[:"access-token"]
   end
 
+  def request_user_update(params)
+    patch api_v1_user_registration_path,
+      headers: {
+        "uid": uid,
+        "client": client,
+        "access-token": access_token,
+      },
+      params: params
+  end
+
   def response_header
     response.header.transform_keys(&:to_sym)
   end

@@ -26,9 +26,26 @@ RSpec.describe "Registrations", type: :request do
   end
 
   describe "Update User" do
-    # PATCH  /api/v1/auth
-    it "update an user"
-    it "can't update user unless signed in"
+    let(:user) { create(:user, name: "test", email: "test@example.com") }
+
+    it "update user name" do
+      request_sign_in user
+      request_user_update(name: "Taro")
+      user.reload
+      expect(user.name).to eq "Taro"
+    end
+
+    it "update user email" do
+      request_sign_in user
+      request_user_update(email: "xxx@example.com")
+      user.reload
+      expect(user.email).to eq "xxx@example.com"
+    end
+
+    it "can't update user unless signed in" do
+      request_user_update(name: "Taro")
+      expect(response).to have_http_status 404
+    end
   end
 
   describe "Delete User" do
