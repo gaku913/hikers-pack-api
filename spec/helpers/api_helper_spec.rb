@@ -15,6 +15,12 @@ RSpec.describe ApiHelper, type: :request do
     expect(access_token).not_to be nil
   end
 
+  # request_sign_out
+  it "requset sign out" do
+    request_sign_out
+    expect(response).to have_http_status 200
+  end
+
   # request_user_update
   it "request update user data" do
     request_sign_in user
@@ -32,6 +38,12 @@ RSpec.describe ApiHelper, type: :request do
     expect(response).to have_http_status 200
   end
 
+  # request_user_destroy
+  it "request destroy user" do
+    request_sign_in user
+    request_user_destroy
+    expect(response).to have_http_status 200
+  end
 
   # response_header
   it "return response header" do

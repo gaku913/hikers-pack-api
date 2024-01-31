@@ -48,6 +48,11 @@ RSpec.describe "Registrations", type: :request do
     end
 
     it "can't update user unless signed in" do
+      set_auth_headers({
+        "uid": user.email,
+        "client": "",
+        "access-token": "",
+      })
       request_user_update(name: "Taro")
       expect(response).to have_http_status 404
     end
@@ -64,6 +69,11 @@ RSpec.describe "Registrations", type: :request do
     end
 
     it "can't update password unless signed in :401 Unauthorized" do
+      set_auth_headers({
+        "uid": user.email,
+        "client": "",
+        "access-token": "",
+      })
       request_password_update(
         password: "new password",
         password_confirmation: "new password",
@@ -73,9 +83,24 @@ RSpec.describe "Registrations", type: :request do
   end
 
   describe "Delete User" do
-    # DELETE   /api/v1/auth
-    it "delete an user"
-    it "can't delete user unless signed in"
+    let(:user) { create(:user) }
+
+    it "delete user" do
+      request_sign_in user
+      request_user_destroy
+      expect(response).to have_http_status 200
+      expect { user.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "can't delete user unless signed in" do
+      request_user_destroy
+      set_auth_headers({
+        "uid": user.email,
+        "client": "",
+        "access-token": "",
+      })
+      expect(response).to have_http_status 404
+    end
   end
 
   describe "Sign in" do
@@ -97,15 +122,8 @@ RSpec.describe "Registrations", type: :request do
     let(:user) { create(:user) }
 
     it "sign out" do
-      # sign in
       request_sign_in user
-
-      # sign out
-      delete destroy_api_v1_user_session_path, params: {
-        "uid": uid,
-        "client": client,
-        "access-token": access_token,
-      }
+      request_sign_out
       expect(response).to have_http_status 200
     end
   end
