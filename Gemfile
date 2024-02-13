@@ -22,4 +22,6 @@ group :development, :test do
   gem "hirb"
   # hirb日本語補正
   gem "hirb-unicode-steakknife"
+  # ダミーデータを生成
+  gem "faker"
 end
