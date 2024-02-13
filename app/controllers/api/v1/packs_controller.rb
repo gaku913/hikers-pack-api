@@ -2,7 +2,7 @@ class Api::V1::PacksController < ApplicationController
   before_action :authenticate_api_v1_user!
 
   def index
-    packs = current_api_v1_user.packs
+    packs = current_api_v1_user.packs.order(start_date: :desc)
     render json: packs
   end
 
