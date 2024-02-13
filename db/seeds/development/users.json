@@ -1,0 +1,17 @@
+[
+  {
+    "name": "がく",
+    "email": "gaku@email.com",
+    "password": "password"
+  },
+  {
+    "name": "たろう",
+    "email": "taro@email.com",
+    "password": "password"
+  },
+  {
+    "name": "じろう",
+    "email": "jiro@email.com",
+    "password": "password"
+  }
+]

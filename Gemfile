@@ -24,4 +24,5 @@ group :development, :test do
   gem "hirb-unicode-steakknife"
   # ダミーデータを生成
   gem "faker"
+  gem "gimei"
 end
