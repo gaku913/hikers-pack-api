@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_16_002717) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_16_010110) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_16_002717) do
     t.datetime "updated_at", null: false
     t.index ["name", "weight"], name: "index_items_on_name_and_weight", unique: true
     t.index ["user_id"], name: "index_items_on_user_id"
+  end
+
+  create_table "pack_items", force: :cascade do |t|
+    t.bigint "pack_id", null: false
+    t.bigint "item_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.boolean "checked", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_pack_items_on_item_id"
+    t.index ["pack_id", "item_id"], name: "index_pack_items_on_pack_id_and_item_id", unique: true
+    t.index ["pack_id"], name: "index_pack_items_on_pack_id"
   end
 
   create_table "packs", force: :cascade do |t|
@@ -61,5 +73,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_16_002717) do
   end
 
   add_foreign_key "items", "users"
+  add_foreign_key "pack_items", "items"
+  add_foreign_key "pack_items", "packs"
   add_foreign_key "packs", "users"
 end
