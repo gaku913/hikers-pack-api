@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :pack_item do
-    pack { nil }
-    item { nil }
+    pack
+    item
   end
 end
