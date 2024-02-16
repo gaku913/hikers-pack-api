@@ -1,0 +1,16 @@
+[
+  {
+    "user_id": 1,
+    "name": "ザック",
+    "weight": 800
+  },
+  {
+    "user_id": 1,
+    "name": "帽子",
+    "weight": 100
+  },
+  {
+    "user_id": 1,
+    "name": "財布"
+  }
+]
