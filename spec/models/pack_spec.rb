@@ -17,7 +17,13 @@ RSpec.describe Pack, type: :model do
   end
 
   describe "association with Items" do
-    let(:pack) { create(:pack, items_count: 2) }
+    let(:user) { create(:user) }
+    let(:pack) { create(:pack, user: user) }
+    let(:items) { create_list(:item, 2, user: user) }
+
+    before do
+      pack.items << items
+    end
 
     it "has many Items" do
       expect(pack.items[0]).to be_an_instance_of(Item)
@@ -32,7 +38,13 @@ RSpec.describe Pack, type: :model do
   end
 
   describe "association with PackItems" do
-    let(:pack) { create(:pack, items_count: 2) }
+    let(:user) { create(:user) }
+    let(:pack) { create(:pack, user: user) }
+    let(:items) { create_list(:item, 2, user: user) }
+
+    before do
+      pack.items << items
+    end
 
     it "has many PackItems" do
       expect(pack.pack_items[0]).to be_an_instance_of(PackItem)

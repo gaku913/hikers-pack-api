@@ -2,8 +2,16 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Packs", type: :request do
 
-  let(:pack1) { create(:pack, title: "Pack1") }
-  let(:pack2) { create(:pack, title: "Pack2") }
+  let(:pack1) { create(:pack,
+    title: "Pack1",
+    start_date: "2000-01-01",
+    end_date: "2000-01-10",
+  )}
+  let(:pack2) { create(:pack,
+    title: "Pack2",
+    start_date: "2000-01-02",
+    end_date: "2000-01-10",
+  )}
   let(:user) { create(:user, packs: [pack1, pack2]) }
 
   # ログイン状態
@@ -13,21 +21,23 @@ RSpec.describe "Api::V1::Packs", type: :request do
     end
 
     describe "GET #index" do
-      it "returns http success and packs list" do
+      it "returns http success" do
         get api_v1_packs_path, headers: auth_headers
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok) #200
       end
       it "returns packs list" do
         get api_v1_packs_path, headers: auth_headers
-        expect(response_body[0]).to include(title: "Pack1")
-        expect(response_body[1]).to include(title: "Pack2")
+
+        # it sorted by start_date in desc
+        expect(response_body[0]).to include(title: "Pack2")
+        expect(response_body[1]).to include(title: "Pack1")
       end
     end
 
     describe "GET #show" do
       it "returns http success" do
         get api_v1_pack_path(pack1.id), headers: auth_headers
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok) #200
       end
       it "returns pack1" do
         get api_v1_pack_path(pack1.id), headers: auth_headers
@@ -40,13 +50,13 @@ RSpec.describe "Api::V1::Packs", type: :request do
         post api_v1_packs_path,
           headers: auth_headers,
           params: { pack: attributes_for(:pack, user_id: user.id) }
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:created) #201
       end
       it "creates a new pack" do
         expect {
           post api_v1_packs_path,
-          headers: auth_headers,
-          params: { pack: attributes_for(:pack, user_id: user.id) }
+            headers: auth_headers,
+            params: { pack: attributes_for(:pack, user_id: user.id) }
         }.to change(Pack, :count).by(1)
       end
     end
@@ -57,7 +67,7 @@ RSpec.describe "Api::V1::Packs", type: :request do
         patch api_v1_pack_path(pack1.id),
           headers: auth_headers,
           params: { pack: { title: new_title } }
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok) #200
         expect(pack1.reload.title).to eq(new_title)
       end
     end
@@ -68,7 +78,7 @@ RSpec.describe "Api::V1::Packs", type: :request do
           delete api_v1_pack_path(pack1.id),
           headers: auth_headers
         }.to change(Pack, :count).by(-1)
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:ok) #200
       end
     end
   end
@@ -83,14 +93,14 @@ RSpec.describe "Api::V1::Packs", type: :request do
     describe "GET #index" do
       it "returns status 401" do
         get api_v1_packs_path, headers: auth_headers
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(:unauthorized) #401
       end
     end
 
     describe "GET #show" do
       it "returns status 401" do
         get api_v1_pack_path(pack1.id), headers: auth_headers
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(:unauthorized) #401
       end
     end
 
@@ -99,7 +109,7 @@ RSpec.describe "Api::V1::Packs", type: :request do
         post api_v1_packs_path,
           headers: auth_headers,
           params: { pack: attributes_for(:pack, user_id: user.id) }
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(:unauthorized) #401
       end
     end
 
@@ -109,7 +119,7 @@ RSpec.describe "Api::V1::Packs", type: :request do
         patch api_v1_pack_path(pack1.id),
           headers: auth_headers,
           params: { pack: { title: new_title } }
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(:unauthorized) #401
       end
     end
 
@@ -117,7 +127,7 @@ RSpec.describe "Api::V1::Packs", type: :request do
       it "returns status 401" do
         delete api_v1_pack_path(pack1.id),
         headers: auth_headers
-        expect(response).to have_http_status(401)
+        expect(response).to have_http_status(:unauthorized) #401
       end
     end
 

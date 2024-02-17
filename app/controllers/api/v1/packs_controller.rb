@@ -14,7 +14,7 @@ class Api::V1::PacksController < ApplicationController
   def create
     pack = current_api_v1_user.packs.new(pack_params)
     if pack.save
-      render json: {status: "SUCCESS", message: "Saved article", data: pack}, status: :ok
+      render json: {status: "SUCCESS", message: "Saved article", data: pack}, status: :created
     else
       render json: {status: "ERROR", message: "Pack not saved", data: pack.errors}, status: :unprocessable_entity
     end

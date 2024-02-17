@@ -11,7 +11,7 @@ FactoryBot.define do
 
     after(:build) do |item, evaluator|
       evaluator.packs_count.times do
-        item.pack_items << FactoryBot.build(:pack_item, item: item, pack: build(:pack))
+        item.pack_items << FactoryBot.build(:pack_item, item: item, pack: create(:pack))
       end
     end
   end

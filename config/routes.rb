@@ -12,7 +12,10 @@ Rails.application.routes.draw do
       end
 
       # Packs
-      resources :packs
+      resources :packs do
+        # PackItems
+        resources :items, controller: "pack_items"
+      end
 
       # API接続テスト
       resources :hello, only: [:index]
