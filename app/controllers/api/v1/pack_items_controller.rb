@@ -48,6 +48,31 @@ class Api::V1::PackItemsController < ApplicationController
     @pack_item.destroy
   end
 
+  # 複数pack_itemのcheckedをまとめて更新する
+  def update_checked
+    # 更新するidの取得
+    check_on_ids = []
+    check_off_ids = []
+    pack_items_params.each do |pack_item_params|
+      id = pack_item_params[:id]
+      checked = ActiveRecord::Type::Boolean.new.cast(pack_item_params[:checked])
+      checked ? check_on_ids << id : check_off_ids << id
+    end
+
+    # checkをONにする
+    unless check_on_ids.empty?
+      @pack.pack_items.where(id: check_on_ids).update_all(checked: true)
+    end
+
+    # checkをOFFにする
+    unless check_off_ids.empty?
+      @pack.pack_items.where(id: check_off_ids).update_all(checked: false)
+    end
+
+    # response status 204
+    head :no_content
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -59,13 +84,19 @@ class Api::V1::PackItemsController < ApplicationController
     @pack_item = @pack.pack_items.find(params[:id])
   end
 
-  # Only allow a list of trusted parameters through.
+  # Strong Prameters
   def pack_item_params
     params.require(:pack_item).permit(:quantity, :checked)
   end
 
   def item_params
     params.require(:pack_item).permit(item: [:name, :weight])[:item]
+  end
+
+  def pack_items_params
+    params
+      .require(:pack_items)
+      .map {|pack_item_params| pack_item_params.permit(:id, :checked)}
   end
 
   # 現在のitemの属性にitem_paramsをマージする

@@ -233,6 +233,75 @@ RSpec.describe "Api::V1::PackItems", type: :request do
         end
       end
     end
+
+    describe "PATCH #update_checked" do
+      it "checked on: one pack_item" do
+        pack_item = pack.pack_items[0]
+        patch update_checked_api_v1_pack_items_path(pack),
+          headers: auth_headers,
+          params: { pack_items: [{ id: pack_item.id, checked: true }] }
+        expect(response).to have_http_status(:no_content) #204
+        pack_item.reload
+        expect(pack_item.checked).to be true
+      end
+
+      it "checked off: one pack_item" do
+        pack_item = pack.pack_items[0]
+        patch update_checked_api_v1_pack_items_path(pack),
+          headers: auth_headers,
+          params: { pack_items: [{ id: pack_item.id, checked: false }]}
+        pack_item.reload
+        expect(pack_item.checked).to be false
+      end
+
+      it "checked on: some pack_items" do
+        flags = [true, true, true]
+        pack_items = pack.pack_items.take(flags.length)
+        patch update_checked_api_v1_pack_items_path(pack),
+          headers: auth_headers,
+          params: {
+            pack_items: pack_items.map.with_index do |pack_item, index|
+              { id: pack_item.id, checked: flags[index] }
+            end
+          }
+        pack_items.each_with_index do |pack_item, index|
+          pack_item.reload
+          expect(pack_item.checked).to eq flags[index]
+        end
+      end
+
+      it "checked off: some pack_items" do
+        flags = [false, false, false]
+        pack_items = pack.pack_items.take(flags.length)
+        patch update_checked_api_v1_pack_items_path(pack),
+          headers: auth_headers,
+          params: {
+            pack_items: pack_items.map.with_index do |pack_item, index|
+              { id: pack_item.id, checked: flags[index] }
+            end
+          }
+        pack_items.each_with_index do |pack_item, index|
+          pack_item.reload
+          expect(pack_item.checked).to eq flags[index]
+        end
+      end
+
+      it "checked on|off: some pack_items" do
+        flags = [false, true, false]
+        pack_items = pack.pack_items.take(flags.length)
+        patch update_checked_api_v1_pack_items_path(pack),
+          headers: auth_headers,
+          params: {
+            pack_items: pack_items.map.with_index do |pack_item, index|
+              { id: pack_item.id, checked: flags[index] }
+            end
+          }
+        pack_items.each_with_index do |pack_item, index|
+          pack_item.reload
+          expect(pack_item.checked).to eq flags[index]
+        end
+      end
+    end
   end
 
   # ログアウト状態
@@ -277,6 +346,15 @@ RSpec.describe "Api::V1::PackItems", type: :request do
     describe "DELETE #destroy" do
       it "returns status 401" do
         delete api_v1_pack_item_path(pack, pack.pack_items[0]), headers: auth_headers
+        expect(response).to have_http_status(:unauthorized) #401
+      end
+    end
+
+    describe "PATCH #update_checked" do
+      it "returns status 401" do
+        patch update_checked_api_v1_pack_items_path(pack),
+          headers: auth_headers,
+          params: { pack_items: [{ id: 1, checked: true }] }
         expect(response).to have_http_status(:unauthorized) #401
       end
     end

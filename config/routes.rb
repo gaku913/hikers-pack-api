@@ -14,7 +14,11 @@ Rails.application.routes.draw do
       # Packs
       resources :packs do
         # PackItems
-        resources :items, controller: "pack_items"
+        resources :items, controller: "pack_items" do
+          collection do
+            patch "update_checked"
+          end
+        end
       end
 
       # API接続テスト
